@@ -18,13 +18,6 @@ def main():
         help="The per-line indent to use when printing a human readable json string",
     )
     parser.add_argument(
-        "--encoding",
-        "-e",
-        type=str,
-        default="UTF-8",
-        help="The character encoding use..",
-    )
-    parser.add_argument(
         "path",
         metavar="path",
         type=str,
@@ -34,12 +27,7 @@ def main():
     args = parser.parse_args()
 
     factory = sc2reader.factories.SC2Factory()
-    try:
-        factory.register_plugin(
-            "Replay", toJSON(encoding=args.encoding, indent=args.indent)
-        )  # legacy Python
-    except TypeError:
-        factory.register_plugin("Replay", toJSON(indent=args.indent))
+    factory.register_plugin("Replay", toJSON(indent=args.indent))
     replay_json = factory.load_replay(args.path[0])
     print(replay_json)
 
