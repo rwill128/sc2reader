@@ -29,7 +29,7 @@ class ContextLoader(object):
 
         if event.ability_id not in replay.datapack.abilities:
             # safeguard against missing abilities
-            if event.player.pid in self.last_target_ability_event:
+            if event.player is not None and event.player.pid in self.last_target_ability_event:
                 del self.last_target_ability_event[event.player.pid]
 
             if not getattr(replay, "marked_error", None):
@@ -47,7 +47,7 @@ class ContextLoader(object):
             self.logger.error(
                 "{0}\t{1}\tMissing ability {2:X} from {3}".format(
                     event.frame,
-                    event.player.name,
+                    event.player,
                     event.ability_id,
                     replay.datapack.__class__.__name__,
                 )
@@ -63,7 +63,8 @@ class ContextLoader(object):
             self.logger.error("Other unit {0} not found".format(event.other_unit_id))
 
     def handleTargetUnitCommandEvent(self, event, replay):
-        self.last_target_ability_event[event.player.pid] = event
+        if event.player is not None:
+            self.last_target_ability_event[event.player.pid] = event
 
         if not replay.datapack:
             return
@@ -90,7 +91,7 @@ class ContextLoader(object):
         # We may not find a TargetUnitCommandEvent before finding an
         # UpdateTargetUnitCommandEvent, perhaps due to Missing Abilities in the
         # datapack
-        if event.player.pid in self.last_target_ability_event:
+        if event.player is not None and event.player.pid in self.last_target_ability_event:
             # store corresponding TargetUnitCommandEvent data in this event
             # currently using for *MacroTracker only, so only need ability name
             event.ability_name = self.last_target_ability_event[
