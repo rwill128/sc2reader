@@ -56,6 +56,27 @@ def toDict(replay):
                     "is_public": message.to_all,
                 }
             )
+        player_units = [value for value in replay.active_units.values() if value.owner is not None and value.owner.name == player.name]
+        player_unit_names = list()
+        for unit in player_units:
+            player_unit_names.append(
+                {
+                'id': getattr(unit, "id", None),
+                'name': getattr(unit, "name", None),
+                'started_at': getattr(unit, 'started_at', None),
+                'is_building': getattr(unit, 'is_building', None),
+                'is_army': getattr(unit, 'is_army', None),
+                'minerals': getattr(unit, 'minerals', None),
+                'vespene': getattr(unit, "vespene", None),
+                'died_at': getattr(unit, "died_at", None),
+                'finished_at': getattr(unit, "finished_at", None),
+                'is_worker': getattr(unit, "is_worker", None),
+                'killed_by': getattr(unit, "killed_by", None),
+                'killing_player': getattr(unit, "killing_player", None),
+                'killing_unit': getattr(unit, "killing_unit", None),
+                'supply': getattr(unit, "supply", None),
+                }
+            )
         players.append(
             {
                 "avg_apm": getattr(player, "avg_apm", None),
@@ -70,9 +91,10 @@ def toDict(replay):
                 "uid": getattr(player, "uid", None),
                 "url": getattr(player, "url", None),
                 "messages": messages,
+                "units": player_unit_names,
             }
         )
-
+        
     # Consolidate replay metadata into dictionary
     return {
         "region": getattr(replay, "region", None),
